@@ -1,0 +1,27 @@
+postBoxClick = (event) => {
+        this.setState(
+            {postBoxDisplay: this.state.postBoxDisplay === 'none' ? 'inline-block' : 'none'}
+        ); 
+        console.log('focus');
+    }
+
+
+    <div className="in-feed-post">
+                <AccountCircle className="post-icon"/>
+                    <TextField className="post-input"
+                        placeholder="What's on your mind?"
+                        id="bootstrap-input"
+                        InputLabelProps={{
+                        shrink: true,
+                        }}
+                        onFocus={this.postBoxClick}
+                        
+                        onBlur={this.postBoxClick}
+                    />
+                    <br/>
+                    <br/>
+                    <Button style={{display:this.state.postBoxDisplay}} variant="contained" color="primary">
+                        Post
+                    </Button>
+
+                </div>
