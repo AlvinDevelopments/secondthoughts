@@ -10,74 +10,72 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 
 import Button from '@material-ui/core/Button';
 
+import cookie from 'react-cookie';
+
 class Feed extends Component {
 
     constructor(props){
         super(props);
         this.state = {
-            posts: []
+            posts: [],
+            isHome: this.props.isHome || false,
+            userHandle : this.props.userHandle || '',
+            userId: this.props.userId || ''
         };
     }
     
     componentDidMount(){
-        // GET Posts where id === id in following []
 
-        // GET token 
+        // fetch home if home prop is true
+        if(this.props.home){
+            let token = 'Bearer '+cookie.load('token');
+            fetch('/0.0/posts/home_timeline',{
+                method: 'GET',
+                headers:{
+                    'Content-Type': 'application/json',
+                    'Authorization': token,
+                }
+            })
+            .then(response => response.json())
+            .then((data)=>{
+                this.setState({posts:data});
+            });
+        }
+        else{
+            console.log('looking up name');
+            fetch('/0.0/users/lookup_name/'+this.state.userHandle,{
+                method: 'GET',
+                headers:{
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response=>response.json())
+            .then((data) => {
+                fetch('/0.0/posts/user_timeline?id='+data._id,{
+                    method: 'GET',
+                    headers:{
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then((data)=>{
+                    console.log(data);
+                    this.setState({posts:data.reverse()});
+                });
 
-        // fetch('https://api.twitter.com/oauth/access_token',{
-        //     method: 'POST',
-        //     mode: 'cors',
-        //     headers : {
-        //         'Accept': 'application/json',
-        //         'Content-Type': 'application/json; charset=UTF-8',
-        //         // 'Authorization': token,
-        //     },
-        //     body: JSON.stringify({
-        //         'oauth_verifier': 
-        //     })
-        // }).then(response => {
-        //     console.log(response);
-        //     return response.json()
-        // } )
-        // .then(jsondata => {
-        //     this.setState({posts:jsondata});
-        // });
+            })
         
-
-
-        // var token = 
-
-
-    //     fetch('',{
-    //         method: 'GET',
-    //         mode: 'cors',
-    //         headers:{
-    //             'Authorization': "OAuth oauth_consumer_key=\"HJuE1Sk6WjilI7GLOp4qd82er\", oauth_token=\"1011734384167145472-T7zHGqMWooHZAJ4YWgXWIZpCEoP7h9\", oauth_signature_method=\"HMAC-SHA1\", oauth_timestamp=\"1531544318\", oauth_nonce=\"us6rucnhdEn\", oauth_version=\"1.0\", oauth_signature=\"mFhS2RHpezhNYjj4fAyA9HuWeBY%3D\"",
-    //             'Content-Type': 'application/json; charset=UTF-8'
-    //         }
-    //     }).then(response => {
-    //         console.log(response);
-    //         return response.json()
-    //     } )
-    //     .then(jsondata => {
-    //         this.setState({posts:jsondata});
-    //     });
-    // }
+        }
     }
-
-
-
-
 
     render(){
         return (
-            <div className={this.props.className}>
-                the Feed <br/>
+            <div className={this.props.className}> <br/>
                 {
                     this.state.posts.map((post)=>
-                        <div key={post.id}>
+                        <div key={post._id}>
                             <Divider/>
-                            <Post avatar_url={post.avatar_url} id={post.login}/>
+                            <Post id={post._id}/>
                         </div>
                     )
                 }    

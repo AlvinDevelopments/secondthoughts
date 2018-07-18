@@ -49,13 +49,23 @@ class TopBar extends Component{
     };
 
     handleProfile = (event) => {
-        this.props.history.push("/User");
+        this.props.history.push('/'+cookie.load('userHandle'));
+        window.location.reload();
     }
 
     handleLogIn = (event) => {
         console.log('handle log in');
         this.props.history.push("/signin");
     };
+
+    handleLogOut = (event) => {
+        cookie.save('isLoggedIn',false);
+        cookie.save('token',null);
+        cookie.save('userId',null);
+        cookie.save('userHandle',null);
+        this.props.history.push('/');
+        window.location.reload();
+    }
 
 
     render(){
@@ -87,7 +97,7 @@ class TopBar extends Component{
 
         var rightButtons = (
             <div style={styles.login}>
-                            <TextField  
+                            {/* <TextField  
                                 placeholder="Search"
                                 id="bootstrap-input"
                                 InputProps={{
@@ -100,13 +110,17 @@ class TopBar extends Component{
                                 InputLabelProps={{
                                 shrink: true,
                                 }}
-                            />
+                            /> */}
                             <IconButton onClick={this.handleProfile} >
                                 <AccountCircle/>
                             </IconButton>
                             <Button color="inherit"
                             onClick={this.handleViewChange}>
                                 Post
+                            </Button>
+                            <Button color="inherit"
+                            onClick={this.handleLogOut}>
+                                Logout
                             </Button>
                         </div>
         );

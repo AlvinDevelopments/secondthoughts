@@ -83,3 +83,7 @@
 .icon{
     max-width: 150px;
 }
+
+.profile{
+    display: flex;
+}

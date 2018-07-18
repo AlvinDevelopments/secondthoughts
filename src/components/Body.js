@@ -6,6 +6,9 @@ import Messages from './Messages';
 import Notifications from './Notifications';
 import Profile from './Profile';
 import LoginForm from './LoginForm';
+import RegisterForm from './RegisterForm';
+
+import PrivateRoute from './PrivateRoute';
 
 class Body extends Component {
     constructor(props){
@@ -19,12 +22,12 @@ class Body extends Component {
 
         return (
             <div className="body">
-                this is the Body
                 <Switch>
-                    <Route exact path="/" component={Home}/>
-                    <Route exact path="/i/messages" component={Messages}/>
-                    <Route exact path="/i/notifications" component={Notifications}/>
+                    <PrivateRoute exact path="/" component={Home}/>
+                    <PrivateRoute exact path="/i/messages" component={Messages}/>
+                    <PrivateRoute exact path="/i/notifications" component={Notifications}/>
                     <Route exact path="/signin" component = {LoginForm}/>
+                    <Route exact path="/register" component = {RegisterForm}/>
                     <Route exact path="/:username" component={Profile}/>
                 </Switch>
             </div>

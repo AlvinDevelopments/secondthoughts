@@ -9,7 +9,7 @@ class Post extends Component {
     constructor(props){
         super(props);
         this.state = {
-            post: this.props.avatar_url || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+            post: 'wtf',
             postid: this.props.id,
             author: 'User',
             handle: '@MyUserHandle',
@@ -18,7 +18,17 @@ class Post extends Component {
     }
 
     componentDidMount(){
-        // fetch post of post id
+         // fetch post of post id
+        fetch('/0.0/posts/show?id='+this.props.id,{
+            method:'GET',
+            headers:{
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response=>response.json())
+        .then((data)=>{
+            this.setState({post:data.content, author:data.author, handle:'@'+data.author, time:data.postDate});
+        });
     }
 
     render(){
@@ -28,10 +38,8 @@ class Post extends Component {
             <div className="post">
             <a href="#"> <b>{this.state.author}</b></a> {this.state.handle} {this.state.time}
             <br/>
-            <br/>{this.state.postid}
             <br/>
-            <img className="icon" src={this.state.post}/>
-            <a href={this.state.post}> {this.state.post}</a>
+            <a> {this.state.post}</a>
             <br/>
             <br/>
             <IconButton>

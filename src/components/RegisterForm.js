@@ -12,7 +12,12 @@ class LoginForm extends Component {
         super(props);
         this.state = {
             username:'',
-            password:''
+            password:'',
+            firstname: '',
+            lastname: '',
+            email: '',
+            password: '',
+            passwordretype: ''
         };
     }
 
@@ -26,7 +31,7 @@ class LoginForm extends Component {
     handleSubmit = (event) => {
         event.preventDefault();
 
-        fetch('/0.0/authenticate/signin',{
+        fetch('/0.0/authenticate/register',{
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -36,8 +41,6 @@ class LoginForm extends Component {
         }
         ).then((response) => response.json())
         .then((data)=>{
-            console.log(data);
-            console.log('lmao');
             cookie.save('token',data.token);
             cookie.save('userId',data.userId);
             cookie.save('userHandle',data.userHandle);
@@ -57,11 +60,14 @@ class LoginForm extends Component {
         return( 
             <div>
                 <form onSubmit={this.handleSubmit}>
+                    <TextField id="firstname" label="First Name" onChange={(e)=>this.handleChange('firstname',e)}/><br/>
+                    <TextField id="lastname" label="Last Name" onChange={(e)=>this.handleChange('lastname',e)}/><br/>
                     <TextField id="username" label="Username" onChange={(e)=>this.handleChange('username',e)}/><br/>
+                    <TextField id="email" label="Email Address" onChange={(e)=>this.handleChange('email',e)}/><br/>
                     <TextField id="password" label="Password" onChange={(e)=>this.handleChange('password',e)} type="password"/><br/>
-                    <b style={{'color':'red'}} >lol </b>
-                    <Button href="/register"> Register</Button><br/>
-                    <Button color="inherit" variant="contained" type="submit"> sign in </Button>
+                    <TextField id="passwordretype" label="Confirm Password" onChange={(e)=>this.handleChange('passwordretype',e)} type="password"/><br/>
+                    <Button color="inherit"  type="submit"> sign in </Button><br/>
+                    <Button type="submit" variant="contained" > Register</Button>
                 </form>
             </div>
         )

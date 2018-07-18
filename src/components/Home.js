@@ -33,14 +33,12 @@ class Home extends Component {
         return (
             <div className="homepage">
                 <Sidebar>
-                    Sidebar 
                     <ProfileCard />
                     <Divider /><br/>
                     <Footer/>
                 </Sidebar>
                 <Feed className="feed" />
                 <Sidebar>
-                    <Divider /><br/>
                     <Footer/>
                 </Sidebar>
             </div>
