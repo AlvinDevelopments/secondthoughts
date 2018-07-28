@@ -3,8 +3,6 @@ import { Redirect, Route } from 'react-router-dom';
 
 import cookie from 'react-cookie';
 
-
-
 export const auth = {
   isAuthenticated: cookie.load('isLoggedIn') || false,
   authenticate(cb) {

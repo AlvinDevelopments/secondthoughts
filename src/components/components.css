@@ -5,6 +5,111 @@
     z-index: 1;
 }
 
+.card-profile-img{
+    left: -50%;
+    top: -50%;
+    position: absolute;
+}
+
+.card-banner{
+    width: 100%;
+    background-color: turquoise;
+    height: 100px;
+    overflow: hidden;
+}
+
+.top-bar-search{
+    padding: 10px 12px;
+    background: white;
+    border-radius: 25px;
+    padding: 40px;
+    /* width: 300px; */
+    /* border: 10px solid #609; */
+
+}
+
+.post-menu-button{
+    float: right;
+    position: relative;
+    right: 0;
+}
+
+.profile-banner{
+    width: 100%;
+    background-color: turquoise;
+    height: 300px;
+    overflow: hidden;
+}
+
+.banner-img{
+    width: 100%;
+    top: -50%;
+    position: relative;
+}
+
+.profile-img{
+    left: -50%;
+    top: -50%;
+    position: absolute;
+}
+
+.top-header{
+    background-color:turquoise;
+}
+
+.user-info{
+    font-weight: bold;
+    display:flex;
+    justify-content: space-between;
+    background-color:white;
+    padding: 10px;
+}
+
+.user-info-values{
+    font-size: 25px;
+    color: grey;
+}
+
+.left-placeholder{
+    /* background-color: blue; */
+    flex:1 0;
+}
+
+.circleBase {
+    border-radius: 50%;
+    position: absolute;
+    top: 200px;
+}
+
+.type1 {
+    width: 250px;
+    height: 250px;
+    background: pink;
+    border: 5px solid white;
+    overflow: hidden;
+}
+
+.button-group{
+    margin: 0px 0px 0px 55px;
+    flex:2 0;
+}
+
+.info-button{
+    color: grey;
+    font-size: 15px;
+    /* white-space: pre; */
+    display:inline-block;
+    margin: 10px;
+}
+
+.follow-button{
+    flex: 1 0;
+    /* display:inline-block; */
+    /* background-color: yellow; */
+    text-align: right;
+    margin: 10px 0px 10px 0px;
+    padding: 0px 80px 0px 0px;
+}
 .modal-box{
     position: fixed;
     top: 25%;
@@ -21,7 +126,9 @@
 }
 .body{
     padding-top: 65px;
-    background-color: #E6E6E6;
+    /* background-color:#ffebe0; */
+    background-color: #e4f7dc;
+    /* height: 100 */
 }
 
 .homepage{
@@ -40,6 +147,7 @@
 .feed{
     flex: 2 0 0;
     min-width: 500px;
+    /* background: #fdffc6; */
     background: white;
     margin: 10px;
 }
@@ -63,7 +171,7 @@
 
 .post-input{
     flex: 9 0 0;
-    background-color: white;
+    background-color: rgb(205, 62, 62);
     padding: 8px;
     margin: 8px;
 }
@@ -71,14 +179,14 @@
 .modal-post-input{
     width: 50%;
     /* background: cadetblue; */
- 
+    opacity: 1;
 }
 
-.border{
-    /* border-width:2px;
-    border-style:solid;
-    border-color:grey; */
+.modal-reply-input{
+    width: 100%;
+    /* background: cadetblue; */
 }
+
 
 .icon{
     max-width: 150px;
@@ -86,4 +194,27 @@
 
 .profile{
     display: flex;
+}
+
+.profile-card{
+    text-align: left;
+}
+
+.footer{
+    background: white;
+    padding: 10px;
+    box-shadow: #000000;
+    text-decoration: none;
+    list-style: none;
+    display: block;
+    color: black;
+}
+
+.stylized-input{
+    top: 28%;
+    left: 26.5%;
+    position: absolute;
+    width: 50%;
+    overflow-wrap: break-word;
+    text-align: left;
 }

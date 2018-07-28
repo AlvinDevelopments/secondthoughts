@@ -12,7 +12,8 @@ class LoginForm extends Component {
         super(props);
         this.state = {
             username:'',
-            password:''
+            password:'',
+            message: ''
         };
     }
 
@@ -34,16 +35,23 @@ class LoginForm extends Component {
             },
             body:JSON.stringify(this.state)
         }
-        ).then((response) => response.json())
+        ).then(response => response.json())
         .then((data)=>{
-            console.log(data);
-            console.log('lmao');
-            cookie.save('token',data.token);
-            cookie.save('userId',data.userId);
-            cookie.save('userHandle',data.userHandle);
-            cookie.save('isLoggedIn',true);
-            this.props.history.push('/');
-            window.location.reload();
+            if(data.token){
+                console.log(data);
+                cookie.save('token',data.token);
+                cookie.save('userId',data.userId);
+                cookie.save('userHandle',data.userHandle);
+                cookie.save('isLoggedIn',true);
+                this.props.history.push('/');
+                window.location.reload();
+            }
+            else{
+                console.log(data);
+                // throw new Error('Something went wrong');
+                // this.setState({message:'something went wrong!!'});
+                this.setState({message:data.msg});
+            }
         });
         
     }
@@ -55,17 +63,17 @@ class LoginForm extends Component {
     render(){
 
         return( 
-            <div>
-                <form onSubmit={this.handleSubmit}>
+            <form className= "body" onSubmit={this.handleSubmit}>
                     <TextField id="username" label="Username" onChange={(e)=>this.handleChange('username',e)}/><br/>
                     <TextField id="password" label="Password" onChange={(e)=>this.handleChange('password',e)} type="password"/><br/>
-                    <b style={{'color':'red'}} >lol </b>
+                    <div><b style={{'color':'red'}} >{this.state.message} </b></div>
                     <Button href="/register"> Register</Button><br/>
                     <Button color="inherit" variant="contained" type="submit"> sign in </Button>
                 </form>
-            </div>
         )
     }
 }
+
+
 
 export default withRouter(LoginForm);

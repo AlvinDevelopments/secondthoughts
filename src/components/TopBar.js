@@ -24,6 +24,12 @@ import cookie from 'react-cookie';
 
 import PostModal from './PostModal';
 
+import { withStyles } from '@material-ui/core/styles';
+
+import PropTypes from 'prop-types';
+
+import Divider from '@material-ui/core/Divider';
+
 
 class TopBar extends Component{
     constructor(props){
@@ -31,7 +37,8 @@ class TopBar extends Component{
         this.state = {
             value: 0,
             postOpen: false,
-            isLoggedIn: cookie.load('isLoggedIn') || false
+            isLoggedIn: cookie.load('isLoggedIn') || false,
+            anchorEl: null
         };
     }
 
@@ -44,20 +51,25 @@ class TopBar extends Component{
         this.props.history.push(links[value]);
     };
 
+
+    // toggles the post form modal
     handleViewChange = (event) => {
-        this.setState({postOpen: !this.state.postOpen });
+        this.setState((prevState => ({postOpen: !prevState.postOpen })));
     };
 
+    
     handleProfile = (event) => {
         this.props.history.push('/'+cookie.load('userHandle'));
         window.location.reload();
     }
 
+    // redirects to log in page
     handleLogIn = (event) => {
         console.log('handle log in');
         this.props.history.push("/signin");
     };
 
+    // log out button handler
     handleLogOut = (event) => {
         cookie.save('isLoggedIn',false);
         cookie.save('token',null);
@@ -67,11 +79,32 @@ class TopBar extends Component{
         window.location.reload();
     }
 
+    // handles the user dropdown menu status
+    handleClose = (event) => {
+        this.setState({anchorEl:null});
+    }
+
+    // handles the user dropdown menu
+    handleClick = (event) => {
+        this.setState({anchorEl:event.currentTarget});
+    }
+
+    handleSearch = (event) => {
+        event.preventDefault();
+        console.log('searching...');
+        // this.props.history.push('/search');
+    }
+
 
     render(){
 
+        const { classes } = this.props;
+
+        const {anchorEl} = this.state;
+
         const styles = {
             root: {
+                backgroundColor: 'turqoise'
             },
             title: {
                 flex: 1
@@ -82,7 +115,6 @@ class TopBar extends Component{
             login:{
                 paddingTop: '10px',
                 flex: 2,
-                flexShrink: 1,
                 textColor: 'white',
             },
           };
@@ -97,9 +129,12 @@ class TopBar extends Component{
 
         var rightButtons = (
             <div style={styles.login}>
-                            {/* <TextField  
-                                placeholder="Search"
-                                id="bootstrap-input"
+                            <form style={{'display':'inline'}}
+                            onSubmit={this.handleSearch}>
+                            <TextField  
+                                // className="top-bar-search"
+                                placeholder=" Search"
+                                // type= "submit"
                                 InputProps={{
                                     endAdornment: (
                                         <InputAdornment position="end">
@@ -110,17 +145,34 @@ class TopBar extends Component{
                                 InputLabelProps={{
                                 shrink: true,
                                 }}
-                            /> */}
-                            <IconButton onClick={this.handleProfile} >
+                            />
+                            </form>
+                            <IconButton onClick={this.handleClick} >
                                 <AccountCircle/>
                             </IconButton>
+
+                            <Menu
+                            style={{'scroll':'auto'}}
+                            anchorEl={anchorEl}
+                            open={Boolean(anchorEl)}
+                            onClose={this.handleClose}
+                            >
+                                <b className="user-menu" >@{cookie.load('userHandle')} </b>
+                                <Divider/>
+                                <MenuItem onClick={this.handleProfile}>Profile </MenuItem>
+                                <MenuItem onClick={this.handleLogOut}>Settings </MenuItem>
+                                <Divider />
+                                <MenuItem onClick={this.handleLogOut}>Logout </MenuItem>
+                                
+                            </Menu>
+
+
                             <Button color="inherit"
+                            className={classes.button}
+                            variant="contained"
+                            color="primary"
                             onClick={this.handleViewChange}>
                                 Post
-                            </Button>
-                            <Button color="inherit"
-                            onClick={this.handleLogOut}>
-                                Logout
                             </Button>
                         </div>
         );
@@ -159,11 +211,11 @@ class TopBar extends Component{
 
         return (
             <div className="top-bar" style={styles.root}>
-                <AppBar style={{backgroundColor:'grey'}}position="static">
+                <AppBar style={{backgroundColor:'#368910'}}position="static">
                     <Toolbar>
                             {tabs}
                         <Typography variant="title" color="inherit" style={styles.title}>
-                            BirdTextPosts
+                            <a style={{'textDecoration':'none','color':'inherit'}}href="/">BirdTextPosts</a>
                         </Typography>
                     {rightButtons}
                         
@@ -179,4 +231,17 @@ class TopBar extends Component{
     }
 }
 
-export default withRouter(TopBar);
+TopBar.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
+
+const styles = theme => ({
+    button: {
+        margin:theme.spacing.unit,
+    },
+    input: {
+        display: 'none',
+    }
+});
+
+export default withStyles(styles)(withRouter(TopBar));

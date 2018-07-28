@@ -12,7 +12,7 @@ class Notifcations extends Component {
     render(){
 
         return (
-            <div>
+            <div className="body">
                 Notifcationspage
                 </div>
         );
