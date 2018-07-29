@@ -210,6 +210,11 @@
     color: black;
 }
 
+.active{
+    font-weight: bold;
+    color: black;
+}
+
 .stylized-input{
     top: 28%;
     left: 26.5%;

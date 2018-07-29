@@ -54,6 +54,8 @@ class Body extends Component {
                     <Route exact path="/signin" component = {LoginForm}/>
                     <Route exact path="/register" component = {RegisterForm}/>
                     <Route exact path="/:username" component={ProfileContainer}/>
+                    <Route exact path="/:username/following" component={ProfileContainer}/>
+                    <Route exact path="/:username/followers" component={ProfileContainer}/>
                     <Route exact path="/hashtag/:hashtag" component={HashTagContainer} />
                     <Route path="/" component={ErrorPage} />
                 </Switch>

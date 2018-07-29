@@ -33,10 +33,10 @@ class ProfileContainer extends Component {
                 handle: '@USER_HANDLE',
                 joinDate: 'Jul 29 2018',
                 location: 'Calgary, Alberta',
-                postCount:'49.7K',
-                followerCount:'43.8K',
-                followingCount:'1,075',
-                likeCount:'15K',
+                postCount:'',
+                followerCount:'',
+                followingCount:'',
+                likeCount:'',
             },
             error: false,
             tab: "one",
@@ -109,6 +109,7 @@ class ProfileContainer extends Component {
     {
         event.preventDefault();
         this.setState({tab:value});
+        // this.props.history.push(window.location.pathname+"/following");
     }
 
     render(){
@@ -127,6 +128,19 @@ class ProfileContainer extends Component {
             followText = this.state.isFollowing ? 'FOLLOWING' : 'FOLLOW';
         }
 
+        const renderFeed = () => {
+            switch(this.state.tab){
+                case 'one':
+                    return <FeedContainer isHome={false} userHandle={this.state.user.handle} userId={this.state.user._id}/> ;
+                case 'two':
+                    return <FollowingList isHome={false} userHandle={this.state.user.handle} userId={this.state.user._id}/> ;
+                case 'three':
+                    return <FollowerList isHome={false} userHandle={this.state.user.handle} userId={this.state.user._id}/> ;
+                case 'four':
+                    return <LikeList isHome={false} userHandle={this.state.user.handle} userId={this.state.user._id}/> ;
+            }
+        }
+
         return(
 
            
@@ -141,10 +155,10 @@ class ProfileContainer extends Component {
                                 </div>
 
                                     <div className="button-group">
-                                        <a href="" onClick={(e)=>this.handleTabChange(e,"one")}><div className="info-button">Posts<div className="user-info-values">{this.state.user.postCount || '49K'}</div></div></a>
-                                        <a href="" onClick={(e)=>this.handleTabChange(e,"two")}><div className="info-button">Following<div className="user-info-values">{this.state.user.followingCount || '69K'}</div></div></a>
-                                        <a href="" onClick={(e)=>this.handleTabChange(e,"three")}><div className="info-button">Followers<div className="user-info-values">{this.state.user.followerCount || '1,095'}</div></div></a>
-                                        <a href="" onClick={(e)=>this.handleTabChange(e,"four")}><div className="info-button">Likes<div className="user-info-values">{this.state.user.likeCount || '15K'}</div></div></a>
+                                        <a href="" onClick={(e)=>this.handleTabChange(e,"one")}><div className="info-button">Posts<div className={(this.state.tab==="one") ? "active user-info-values" : "user-info-values"}>{this.state.user.postCount}</div></div></a>
+                                        <a href="" onClick={(e)=>this.handleTabChange(e,"two")}><div className="info-button">Following<div className={(this.state.tab==="two") ? "active user-info-values" : "user-info-values"}>{this.state.user.friendCount}</div></div></a>
+                                        <a href="" onClick={(e)=>this.handleTabChange(e,"three")}><div className="info-button">Followers<div className={(this.state.tab==="three") ? "active user-info-values" : "user-info-values"}>{this.state.user.followerCount}</div></div></a>
+                                        <a href="" onClick={(e)=>this.handleTabChange(e,"four")}><div className="info-button">Likes<div className={(this.state.tab==="four") ? "active user-info-values" : "user-info-values"}>{this.state.user.likeCount}</div></div></a>
                                     </div>
 
 
@@ -169,8 +183,7 @@ class ProfileContainer extends Component {
                         <Divider /><br/>
                     </div>
                     {
-                        this.state.tab==="one" && this.state.user._id ? <FeedContainer isHome={false} userHandle={this.state.user.handle} userId={this.state.user._id}/> 
-                        : <div className="feed">OTHER SHIT</div>
+                        this.state.user._id ? renderFeed() : <div className="feed">OTHER SHIT</div>
                     }
                     <div className="sidebar">
                         
@@ -187,3 +200,18 @@ const ErrorPage = props =>
 </div>
 
 export default withRouter(ProfileContainer);
+
+const FollowingList = (props) =>
+    <div className="feed">
+        Following:
+    </div>
+
+const FollowerList = (props) =>
+    <div className="feed">
+        Followers:
+    </div>
+    
+const LikeList = (props) =>
+    <div className="feed">
+        Your Likes:
+    </div>

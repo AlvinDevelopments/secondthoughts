@@ -18,7 +18,7 @@ export const HomeCard = (props) =>
         <div className="name-handle"><b>{props.user.firstname} {props.user.lastname}</b><br/>@{props.user.handle}</div>
         <div className="card-stats">
             <a href={"/"+props.user.handle} onClick={(e)=>this.handleTabChange(e,"one")}><div className="info-button">Posts<div className="user-info-values">{props.user.postCount || 30}</div></div></a>
-            <a href={"/"+props.user.handle+"/following"} onClick={(e)=>this.handleTabChange(e,"two")}><div className="info-button">Following<div className="user-info-values">{props.user.followingCount || 50}</div></div></a>
+            <a href={"/"+props.user.handle+"/following"} onClick={(e)=>this.handleTabChange(e,"two")}><div className="info-button">Following<div className="user-info-values">{props.user.friendCount || 50}</div></div></a>
             <a href={"/"+props.user.handle+"/followers"} onClick={(e)=>this.handleTabChange(e,"three")}><div className="info-button">Followers<div className="user-info-values">{props.user.followerCount || 60}</div></div></a>
         </div>
     </Card>
