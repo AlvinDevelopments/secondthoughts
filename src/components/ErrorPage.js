@@ -4,7 +4,7 @@ import {withRouter} from 'react-router-dom';
 
 const ErrorPage = props => 
 <div className="body">
-    ERROR CANT FIND PAGE 
+    ERROR: CAN'T FIND PAGE 
 </div>
 
 export default withRouter(ErrorPage);

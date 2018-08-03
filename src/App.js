@@ -4,9 +4,8 @@ import './App.css';
 import TopBar from './components/TopBar';
 import Body from './components/Body';
 
-
-
 class App extends Component {
+
   render() {
     return (
       <div className="App">

@@ -10,6 +10,10 @@ import Button from '@material-ui/core/Button';
 import Post from './Post';
 
 
+import { ReplyModal, PostMenu} from './Post';
+// import
+
+
 
 import cookie from 'react-cookie';
 import {TextField, Divider } from '../../node_modules/@material-ui/core';
@@ -23,22 +27,28 @@ class PostContainer extends Component {
     constructor(props){
         super(props);
         this.state = {
-            content: '',
-            postid: this.props.id,
-            author: '',
-            handle: '@',
-            time: '',
-            isFavorite: false,
-            likeCount: 0,
-            commentCount: 0,
-            reply: '',
-            isOpen: false,
-            isPostOpen: false,
-            type: '',
-            anchorEl: null,
+            isReplyModalOpen: false,
+            isPostModalOpen: false,
             isMenuOpen: false,
+            anchorEl: null,
             isOwnPost: '',
-            commentList: []
+            
+            
+            postid: this.props.id,
+            reply: '',
+            post: {
+                content: '',
+                type: '',
+                parent:'',
+                author: '',
+                authorId:'',
+                handle: '@',
+                time: '',
+                isFavorite: false,
+                likeCount: 0,
+                commentCount: 0,
+                commentList: [],
+            }
         };
     }
 
@@ -46,52 +56,34 @@ class PostContainer extends Component {
          // fetch post of post id
         fetch('/0.0/posts/show?id='+this.props.id,{
             method:'GET',
-            headers:{
-                'Content-Type': 'application/json',
-            }
         })
         .then(response=>response.json())
         .then((data)=>{
-            // if(data.author!=)
-            console.log(data);
-            console.log(`author id is ${data.authorId}`);
-            console.log(`cookie id is ${cookie.load('userId')}`);
-            console.log(data.commentList);
             if(data.authorId===cookie.load('userId')){
-                console.log('its a match!');
                 this.setState({isOwnPost:true});
             }
-            this.setState({content:data.content,
-                author:data.author, 
-                handle:'@'+data.author, 
-                time:data.postDate, 
-                likeCount:data.likeCount, 
-                commentCount: data.commentCount, 
-                type:data.type,
-                commentList:data.commentList});
+            // console.log(data);
+            this.setState({post:data});
         });
-
 
         // checked favorited status
         fetch('/0.0/favorites/check/'+this.props.id,{
             method:'GET',
             headers:{
-                'Content-Type': 'application/json',
                 'Authorization': 'Bearer '+cookie.load('token')
             }
         })
         .then(response=>response.json())
         .then((data)=>{
-            console.log(data);
+            // console.log(data);
             this.setState({isFavorite:data});
         });
     }
 
     handleFavorite = (event) => {
         const socket = socketIOClient('/');
-
-        socket.emit('favorite createdd');
-
+        socket.emit('favorite created',this.state.authorId);
+        // socket.disconnect();
 
         var endpoint = this.state.isFavorite ? '/0.0/favorites/destroy/' : '/0.0/favorites/create/';
         console.log('endpoint is '+endpoint);
@@ -108,19 +100,10 @@ class PostContainer extends Component {
             console.log(`the result is ${data}`);
             this.setState((prevState => ({likeCount:prevState.likeCount+data})));
         });
-
+        
         this.setState((prevState => ({isFavorite:!prevState.isFavorite})));
-
+        
     }
-
-    handleOpenReplyModal = (event) => {
-        this.setState({isOpen:true});
-    };
-
-    handleOpenPostModal = (event) => {
-        event.preventDefault();
-        this.setState({isPostOpen:true});
-    };
 
     handleReply = (event) => {
         event.preventDefault();
@@ -146,12 +129,9 @@ class PostContainer extends Component {
                 return false;
             }
         });
-
-
         this.setState({isOpen:false});
-
     }
-
+    
     handleRepost = (event) => {
         fetch('/0.0/posts/repost/'+this.state.postid,{
             method:'POST',
@@ -161,23 +141,7 @@ class PostContainer extends Component {
             }
         });
     }
-
-    handleClose = (event) => {
-        this.setState({isOpen:false});
-    }
-
-    handlePostClose = (event) => {
-        this.setState({isPostOpen:false});
-    }
-
-    handleMenu = (event) => {
-        this.setState({anchorEl:event.currentTarget, isMenuOpen:true});
-    }
-
-    handleCloseMenu = (event) => {
-        this.setState({isMenuOpen:false});
-    }
-
+    
     handleDelete = (event) => {
         fetch('/0.0/posts/destroy/'+this.state.postid,{
             method:'POST',
@@ -200,56 +164,88 @@ class PostContainer extends Component {
         });
     }
 
+    handleOpenFullPost = (event) =>{
+        
+    }
+
+    handleToggleReplyModal = (event) => {
+        event.preventDefault();
+        this.setState((prevState)=>({isReplyModalOpen:!prevState.isReplyModalOpen}));
+        console.log('toggle reply modal');
+    }
+
+    handleToggleRepostModal = (event) => {
+        event.preventDefault();
+        // TODO
+    }
+
+    handleTogglePostModal = (event) => {
+        event.preventDefault();
+        this.setState((prevState)=>({isPostModalOpen:!prevState.isPostModalOpen}));
+    }
+
+    handleToggleMenu = (event,position) => {
+        event.preventDefault();
+        console.log(position);
+        if(this.state.isMenuOpen){
+            this.setState((prevState)=>({anchorEl:null, isMenuOpen:!prevState.isMenuOpen}));
+        }
+        else{
+            this.setState((prevState)=>({anchorEl:position, isMenuOpen:!prevState.isMenuOpen}));
+
+        }
+        console.log(this.state.anchorEl);
+    }
 
 
     render(){
-        let repost = false;
-        let status = this.state.type;
-        // if(this.state.author!==window.location.pathname.split('/')[1]){
-        //     repost = true;
-        //     console.log('repost found');
-        //     status = `retweet from ${this.state.author}`;
-        // }
 
         let post = <Post
-        isRepost = {repost}
-        lol={status}
-        author={this.state.author}
-        handle={this.state.handle}
-        time={this.state.time}
-        commentCount={this.state.commentCount}
-        likeCount={this.state.likeCount}
-        content={this.state.content}
-        isFavorite={this.state.isFavorite}
-        onFavorite={this.handleFavorite}
-        onComment={this.handleOpenReplyModal}
-        onRepost={this.handleRepost}
-        handleMenu={this.handleMenu}
-        handleClose={this.handleClose}
-        position={this.state.anchorEl}
-        isOpen={this.state.isMenuOpen}
-        handleCloseMenu={this.handleCloseMenu}
+        // core props
+        post={this.state.post}
         isOwnPost={this.state.isOwnPost}
-        handleDelete={this.handleDelete}
-        handlePostOpen={this.handleOpenPostModal}
+
+        // api action props
+        onFavorite={this.handleFavorite}
+        onRepost={this.handleRepost}
+        onReply={this.handleReply}
+        onDelete={this.handleDelete}
+        
+        // view props
+        isFavorite={this.state.isFavorite}
+
+        // view toggle
+        onTogglePostModal={this.handleTogglePostModal}
+        onToggleMenu={(e,position)=>this.handleToggleMenu(e,position)}
+        onToggleReplyModal={this.handleToggleReplyModal}
+        onToggleRepostModal={this.handleToggleRepostModal}
+        
         />
+
 
         return (
             <div>
                 <ReplyModal 
-                post={post} 
-                author={this.state.author} 
-                open={this.state.isOpen} 
-                handleClose={this.handleClose} 
-                handleReply={this.handleReply}
+                post={post}
+                author={this.state.post.author} 
+                isOpen={this.state.isReplyModalOpen} 
+                onToggleReplyModal={this.handleToggleReplyModal} 
+                onSubmitReply={this.handleReply}
                 />
 
-                <FullPostModal 
-                post={post} 
-                author={this.state.author} 
-                open={this.state.isPostOpen} 
-                handleClose={this.handlePostClose}
-                commentList={this.state.commentList}
+                <PostMenu isOwnPost={this.state.isOwnPost} 
+                position={this.state.anchorEl} 
+                isOpen={this.state.isMenuOpen} 
+                onDelete={this.handleDelete}
+                onToggleMenu={(e,position)=>this.handleToggleMenu(e,position)}
+                />
+
+                <FullPostModal
+                post={post}
+                author={this.state.post.author}
+                isPostModalOpen={this.state.isPostModalOpen}
+                onTogglePostModal={this.handleTogglePostModal}
+                commentList={this.state.post.commentList}
                 />
 
                 {post}
@@ -262,58 +258,13 @@ class PostContainer extends Component {
 export default PostContainer;
 
 
-
-const ReplyModal = (props) => 
-[
-    <Modal
-    aria-labelledby="simple-modal-title"
-    aria-describedby="simple-modal-description"
-    open={props.open}
-    onClose={props.handleClose}
-    >
-        <div className="modal-box">
-            <AccountCircle className="post-icon" />
-            <h2>Reply to {props.author} </h2>
-            {props.post}
-            <div className="border">
-            <form onSubmit={props.handleReply}>
-                <TextField
-                    name="content"
-                    onChange={this.updatePostCount}
-                    className="modal-reply-input"
-                    multiline={true}
-                    rows={4}
-                    placeholder={`Replying to @${props.author}`}
-                    id="bootstrap-input"
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                />
-                <Button type="submit" color="primary">
-                    Post
-                </Button>
-                <Button onClick={props.handleClose} color="primary">
-                        Cancel
-                </Button>
-            </form>
-                <div style={{color:props.color}}> 
-                    Char Count: {props.charCount}/150
-                </div>
-            </div>
-
-            
-        </div>
-    </Modal>
-]
-
-
 const FullPostModal = (props) => 
 [
     <Modal
     aria-labelledby="simple-modal-title"
     aria-describedby="simple-modal-description"
-    open={props.open}
-    onClose={props.handleClose}
+    open={props.isPostModalOpen}
+    onClose={props.onTogglePostModal}
     >
         <div className="modal-box">
             <AccountCircle className="post-icon" />
@@ -336,7 +287,7 @@ const FullPostModal = (props) =>
                 <Button type="submit" color="primary">
                     Post
                 </Button>
-                <Button onClick={props.handleClose} color="primary">
+                <Button onClick={props.onTogglePostModal} color="primary">
                         Cancel
                 </Button>
             </form>
@@ -355,7 +306,6 @@ const FullPostModal = (props) =>
                 )
             }
 
-            
         </div>
     </Modal>
 ]

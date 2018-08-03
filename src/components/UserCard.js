@@ -37,7 +37,7 @@ const UserCard = (props) =>
                     <Typography gutterBottom>{props.user.bio}</Typography>
                     <Typography gutterBottom>{props.user.location}</Typography>
                     <Typography gutterBottom>Joined: {props.user.joinDate}</Typography>
-                    <Typography><PublicIcon/>www.alvnklein.com</Typography>
+                    <Typography><PublicIcon/>{props.user.link || "www.google.com"}</Typography>
                     <Typography ><PinDropIcon/>Calgary, Canada</Typography>
                     <br/>
                 </CardContent>

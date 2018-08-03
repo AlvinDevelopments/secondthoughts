@@ -3,6 +3,7 @@
     top: 0;
     width: 100%;
     z-index: 1;
+    opacity: 1;
 }
 
 .card-profile-img{
@@ -11,8 +12,11 @@
     position: absolute;
 }
 
+
 .card-banner{
     width: 100%;
+    
+    background-color: #0096a9;
     background-color: turquoise;
     height: 100px;
     overflow: hidden;
@@ -126,8 +130,8 @@
 }
 .body{
     padding-top: 65px;
-    /* background-color:#ffebe0; */
-    background-color: #e4f7dc;
+    background-color:#e2f8fbe2;
+    /* background-color: #e4f7dc; */
     /* height: 100 */
 }
 

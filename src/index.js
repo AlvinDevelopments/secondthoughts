@@ -16,8 +16,6 @@ const render = () => ReactDOM.render((
 // store.subscribe(render);
 
 
-
-
 ReactDOM.render((
 <BrowserRouter>
     <App />

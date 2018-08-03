@@ -6,6 +6,8 @@ import Divider from '@material-ui/core/Divider';
 
 import cookie from 'react-cookie';
 
+import {FullPostModal} from './PostContainer';
+
 class FeedContainer extends Component {
 
     constructor(props){
@@ -19,14 +21,12 @@ class FeedContainer extends Component {
     }
     
     componentDidMount(){
-
         console.log(this.props);
         // fetch home if home prop is true
         if(this.props.isHome){
             fetch('/0.0/posts/home_timeline',{
                 method: 'GET',
                 headers:{
-                    'Content-Type': 'application/json',
                     'Authorization': 'Bearer '+cookie.load('token')
                 }
             })
@@ -36,42 +36,15 @@ class FeedContainer extends Component {
             });
         }
         else{
-
             console.log('looking up name');
             fetch('/0.0/posts/user_timeline?id='+this.state.userId,{
                 method: 'GET',
-                headers:{
-                    'Content-Type': 'application/json',
-                }
             })
             .then(response => response.json())
             .then((data)=>{
                 console.log(data);
                 this.setState({posts:data.reverse()});
             });
-                
-            // fetch('/0.0/users/lookup_name/'+this.state.userHandle,{
-            //     method: 'GET',
-            //     headers:{
-            //         'Content-Type': 'application/json'
-            //     }
-            // })
-            // .then(response=>response.json())
-            // .then((data) => {
-            //     fetch('/0.0/posts/user_timeline?id='+data._id,{
-            //         method: 'GET',
-            //         headers:{
-            //             'Content-Type': 'application/json',
-            //         }
-            //     })
-            //     .then(response => response.json())
-            //     .then((data)=>{
-            //         console.log(data);
-            //         this.setState({posts:data.reverse()});
-            //     });
-
-            // });
-        
         }
     }
 
@@ -94,7 +67,7 @@ const FeedList = (props) =>
             props.posts.map((post)=>
                 <div key={post._id}>
                     <Divider light />
-                    <PostContainer key={post._id} id={post._id}/>
+                    <PostContainer onOpenFullPost={this.handleOpenFullPost} key={post._id} id={post._id}/>
                 </div>
             )
         }    

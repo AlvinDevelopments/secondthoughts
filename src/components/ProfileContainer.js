@@ -37,6 +37,8 @@ class ProfileContainer extends Component {
                 followerCount:'',
                 followingCount:'',
                 likeCount:'',
+                profileBannerURL: '',
+                profileImageURL: ''
             },
             error: false,
             tab: "one",
@@ -82,8 +84,6 @@ class ProfileContainer extends Component {
 
 
         });
-    
-
             
     }
 
@@ -147,11 +147,11 @@ class ProfileContainer extends Component {
             <div className="body">
 
                 <div className="top-header">
-                        <div className="profile-banner"><img className="banner-img" src="https://res.cloudinary.com/secondthoughts/image/upload/v1532408063/samples/landscapes/architecture-signs.jpg"/>The banner image.</div>
+                        <div className="profile-banner"><img className="banner-img" src={this.state.user.profileBannerURL}/>The banner image.</div>
                             <div className="user-info">
 
                                 <div className="left-placeholder">
-                                    <div className="type1 circleBase"><img className="profile-img" src="https://res.cloudinary.com/secondthoughts/image/upload/v1532408055/samples/people/smiling-man.jpg"/></div>
+                                    <div className="type1 circleBase"><img className="profile-img" src={this.state.user.profileImageURL}/></div>
                                 </div>
 
                                     <div className="button-group">

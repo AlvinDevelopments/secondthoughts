@@ -48,7 +48,7 @@ class PostModal extends Component {
         let lastChar = !lastWord[lastWord.length-1]? ' ' : lastWord[lastWord.length-1];
         
         let tagArray = event.target.value.match(/[a-zA-Z]*\@[a-zA-Z]*/gi);
-        let hashtagArray = event.target.value.match(/[a-zA-Z]*\#[a-zA-Z]*/gi);
+        let hashtagArray = event.target.value.replace(/xmas/i,' ').match(/[a-zA-Z]*\#[a-zA-Z]*/gi);
 
         this.setState({wordArray:wordArray});
         this.setState({text:event.target.value});
@@ -104,7 +104,7 @@ class PostModal extends Component {
         console.log(this.state.text);
         // CODE TO SEND POST TO API
         var token = 'Bearer '+cookie.load('token');
-        fetch('./0.0/posts/update',{
+        fetch('/0.0/posts/update',{
             method: 'POST',
             headers:{
                 "Accept": "application/json",
@@ -125,7 +125,7 @@ class PostModal extends Component {
 
     render(){
 
-        let content = <p ref="InputField" contentEditable on>
+        let content = <p ref="InputField" contentEditable>
         {
             this.state.wordArray.map((item)=>
                 (item.split('')[0]==='@') ? <span><b>{item}&nbsp;</b></span> : <span>{item}&nbsp;</span>

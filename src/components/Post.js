@@ -3,58 +3,101 @@ import IconButton from '@material-ui/core/IconButton';
 import MessageIcon from '@material-ui/icons/Message';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
-import { Divider, Menu, MenuList, MenuItem } from '../../node_modules/@material-ui/core';
+import { Divider, Menu, MenuList, MenuItem, Modal, TextField, Button } from '../../node_modules/@material-ui/core';
+
+import {AccountCircle} from '@material-ui/icons';
 
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-
 
 const Post = (props) => 
 
 <div className="post">
-    {/* <Divider/> */}
-    <h3 style={{'display':'inline'}}><a href={'/'+props.author}> <b>{props.author}</b></a> </h3>{props.handle} <a href="#" onClick={props.handlePostOpen}>{props.time}</a> 
+    <h3 style={{'display':'inline'}}><a href={'/'+props.post.author}> <b>{props.post.author}</b></a> </h3>{props.post.handle} <a href="#" onClick={props.onTogglePostModal}>{props.post.postDate}</a> 
     <IconButton className="post-menu-button">
-        <MoreVertIcon onClick={props.handleMenu}/>
+        <MoreVertIcon onClick={(e)=>props.onToggleMenu(e,e.currentTarget)}/>
     </IconButton>
-    <PostMenu isOwnPost={props.isOwnPost} position={props.position} isOpen={props.isOpen} handleClose={props.handleCloseMenu} handleDelete={props.handleDelete} />
-    {/* <div><b>{props.lol}</b></div> */}
     <br/>
     <h2>
-        {/* {props.content.split(' ')[0]} */}
         {
-            props.content.split(' ').map(word=>
+            props.post.content.split(' ').map(word=>
                 (word.split('')[0]===('@'))? <span><a href={"/"+word.split('@')[1]}>{word}</a> </span> : 
                 (word.split('')[0]===('#'))? <span><a href={"/hashtag/"+word.split('#')[1]}>{word}</a> </span> : <span>{word} </span>
                 
             )
         }
     </h2>
-    {/* <br/> */}
-    {/* <Divider/> */}
-    <IconButton onClick={props.onComment}>
+    <IconButton onClick={props.onToggleReplyModal}>
         <MessageIcon/>
     </IconButton>
-    {props.commentCount}
+    {props.post.commentCount}
     <IconButton>
         <FavoriteIcon style={{'color': props.isFavorite && 'red'}} onClick={props.onFavorite}/>
     </IconButton>
-    {props.likeCount}
+    {props.post.likeCount}
     <IconButton style={{'color': props.isRepost && 'green'}} onClick={props.onRepost}>
         <ShareIcon/>
     </IconButton>
 </div>
 
 
-const PostMenu = (props) =>
+export const ReplyModal = (props) => 
+[
+    <Modal
+    aria-labelledby="simple-modal-title"
+    aria-describedby="simple-modal-description"
+    open={props.isOpen}
+    onClose={props.onToggleReplyModal}
+    >
+        <div className="modal-box">
+            <AccountCircle className="post-icon" />
+            <h2>Reply to {props.author} </h2>
+            {props.post}
+            <div className="border">
+            <form onSubmit={props.handleReply}>
+                <TextField
+                    name="content"
+                    onChange={this.updatePostCount}
+                    className="modal-reply-input"
+                    multiline={true}
+                    rows={4}
+                    placeholder={`Replying to @${props.author}`}
+                    id="bootstrap-input"
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                />
+                <Button type="submit" color="primary">
+                    Post
+                </Button>
+                <Button onClick={props.onToggleReplyModal} color="primary">
+                        Cancel
+                </Button>
+            </form>
+                <div style={{color:props.color}}> 
+                    Char Count: {props.charCount}/150
+                </div>
+            </div>
+
+            
+        </div>
+    </Modal>
+]
+
+
+export const PostMenu = (props) =>
     <Menu
     open={props.isOpen}
     anchorEl={props.position}
-    onClose={props.handleClose}
+    onClose={props.onToggleMenu}
     >
         {props.isOwnPost && <MenuItem onClick={props.handleDelete} >Delete</MenuItem>}
         {props.isOwnPost &&<MenuItem>Item 2</MenuItem>}
         <MenuItem>Item 3</MenuItem>
     </Menu>
+
+
+
+
 
 
 export default Post;

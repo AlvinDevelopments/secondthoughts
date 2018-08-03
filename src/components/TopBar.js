@@ -16,20 +16,14 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-
 import {withRouter} from 'react-router-dom';
 import './components.css';
-
 import cookie from 'react-cookie';
-
 import PostModal from './PostModal';
-
 import { withStyles } from '@material-ui/core/styles';
-
 import PropTypes from 'prop-types';
-
 import Divider from '@material-ui/core/Divider';
-
+import socketIOClient from 'socket.io-client';
 
 class TopBar extends Component{
     constructor(props){
@@ -38,15 +32,33 @@ class TopBar extends Component{
             value: 0,
             postOpen: false,
             isLoggedIn: cookie.load('isLoggedIn') || false,
-            anchorEl: null
+            anchorEl: null,
+            newNotification: false
         };
     }
 
     componentDidMount(){
+
+        const socket = socketIOClient('/');
+
+        socket.emit('user',{
+            userId: cookie.load('userId'),
+            userName: cookie.load('userHandle')
+        });
+
+        socket.on('new notification',()=>{
+            console.log('received a new notif');
+            this.setState({newNotification:true})
+        });
+
+        socket.addEventListener
     }
 
     handleChange = (event,value)=>{
         this.setState({value: value});
+        if(value===1){
+            this.setState({newNotification:false});
+        }
         let links = ["/","/i/notifications","/i/messages"];
         this.props.history.push(links[value]);
     };
@@ -57,7 +69,6 @@ class TopBar extends Component{
         this.setState((prevState => ({postOpen: !prevState.postOpen })));
     };
 
-    
     handleProfile = (event) => {
         this.props.history.push('/'+cookie.load('userHandle'));
         window.location.reload();
@@ -95,7 +106,6 @@ class TopBar extends Component{
         // this.props.history.push('/search');
     }
 
-
     render(){
 
         const { classes } = this.props;
@@ -122,8 +132,8 @@ class TopBar extends Component{
         var tabs = (
             <Tabs value={this.state.value} style={styles.buttons} onChange={this.handleChange} >
                 <Tab style={{minWidth:100}} icon={<HomeIcon />} />
-                <Tab style={{minWidth:100}} icon={<NotificationIcon />} />
-                <Tab style={{minWidth:100}} icon={<MailIcon />} />
+                {this.state.isLoggedIn ? <Tab style={{color: this.state.newNotification && "red", minWidth:100}} icon={<NotificationIcon />} /> : null}
+                {this.state.isLoggedIn ? <Tab style={{minWidth:100}} icon={<MailIcon />} /> : null}
             </Tabs>
         );
 
@@ -150,75 +160,56 @@ class TopBar extends Component{
                             <IconButton onClick={this.handleClick} >
                                 <AccountCircle/>
                             </IconButton>
-
-                            <Menu
-                            style={{'scroll':'auto'}}
-                            anchorEl={anchorEl}
-                            open={Boolean(anchorEl)}
-                            onClose={this.handleClose}
-                            >
-                                <b className="user-menu" >@{cookie.load('userHandle')} </b>
-                                <Divider/>
-                                <MenuItem onClick={this.handleProfile}>Profile </MenuItem>
-                                <MenuItem onClick={this.handleLogOut}>Settings </MenuItem>
-                                <Divider />
-                                <MenuItem onClick={this.handleLogOut}>Logout </MenuItem>
+                            
+                            {
+                                this.state.isLoggedIn ? 
                                 
-                            </Menu>
+                                <Menu
+                                style={{'scroll':'auto'}}
+                                anchorEl={anchorEl}
+                                open={Boolean(anchorEl)}
+                                onClose={this.handleClose}
+                                >
+                                    <b className="user-menu" >@{cookie.load('userHandle')} </b>
+                                    <Divider/>
+                                    <MenuItem onClick={this.handleProfile}>Profile </MenuItem>
+                                    <MenuItem onClick={this.handleLogOut}>Settings </MenuItem>
+                                    <Divider />
+                                    <MenuItem onClick={this.handleLogOut}>Logout </MenuItem>
+                                    
+                                </Menu>
 
+                            : null
+                            }
+                            
+                            {
+                                this.state.isLoggedIn ? 
 
-                            <Button color="inherit"
-                            className={classes.button}
-                            variant="contained"
-                            color="primary"
-                            onClick={this.handleViewChange}>
-                                Post
-                            </Button>
+                                <Button color="inherit"
+                                className={classes.button}
+                                variant="contained"
+                                color="primary"
+                                onClick={this.handleViewChange}>
+                                    Post
+                                </Button>
+
+                                : <Button onClick={this.handleLogIn}> log in </Button>
+                            }
+                            
                         </div>
         );
 
-        if(!this.state.isLoggedIn){
-            tabs = (
-                <Tabs value={this.state.value} style={styles.buttons} onChange={this.handleChange} >
-                    <Tab style={{minWidth:100}} icon={<HomeIcon />} />
-                </Tabs>
-            );
-
-            rightButtons = (
-
-                <div style={styles.login}>
-                            <TextField  
-                                placeholder="Search"
-                                id="bootstrap-input"
-                                InputProps={{
-                                    endAdornment: (
-                                        <InputAdornment position="end">
-                                        <SearchIcon color="inherit"/>
-                                        </InputAdornment>
-                                    ),
-                                }}
-                                InputLabelProps={{
-                                shrink: true,
-                                }}
-                            />
-                            <Button onClick={this.handleLogIn}> log in </Button>
-                        </div>
-            )
-
-        }
-
-        
-
         return (
             <div className="top-bar" style={styles.root}>
-                <AppBar style={{backgroundColor:'#368910'}}position="static">
+                <AppBar style={{backgroundColor:'#0096a9'}}position="static">
                     <Toolbar>
-                            {tabs}
+                        {tabs}
+                        
                         <Typography variant="title" color="inherit" style={styles.title}>
                             <a style={{'textDecoration':'none','color':'inherit'}}href="/">BirdTextPosts</a>
                         </Typography>
-                    {rightButtons}
                         
+                        {rightButtons}
                     </Toolbar>
                 </AppBar>
 
@@ -226,6 +217,7 @@ class TopBar extends Component{
                 isOpen = {this.state.postOpen}
                 onViewChange={this.handleViewChange}
                 />
+
             </div>
         )
     }

@@ -20,7 +20,7 @@ class LoginForm extends Component {
             passwordretype: ''
         };
     }
-
+    
     componentDidMount(){
         if(cookie.load('isLoggedIn')){
             this.props.history.push('/');
@@ -39,14 +39,27 @@ class LoginForm extends Component {
             },
             body:JSON.stringify(this.state)
         }
-        ).then((response) => response.json())
+        ).then((response) => {
+            if(response.status===200){
+                return response.json();
+            }
+            else{
+                return null;
+            }
+        })
         .then((data)=>{
-            cookie.save('token',data.token);
-            cookie.save('userId',data.userId);
-            cookie.save('userHandle',data.userHandle);
-            cookie.save('isLoggedIn',true);
-            this.props.history.push('/');
-            window.location.reload();
+            if(data){
+                cookie.save('userHandle',data.userHandle);
+                cookie.save('token',data.token);
+                cookie.save('userId',data.userId);
+                cookie.save('isLoggedIn',true);
+                this.props.history.push('/');
+                window.location.reload();
+            }
+            else{
+                window.location.reload();
+            }
+
         });
         
     }
@@ -58,7 +71,7 @@ class LoginForm extends Component {
     render(){
 
         return( 
-            <div>
+            <div className="body">
                 <form onSubmit={this.handleSubmit}>
                     <TextField id="firstname" label="First Name" onChange={(e)=>this.handleChange('firstname',e)}/><br/>
                     <TextField id="lastname" label="Last Name" onChange={(e)=>this.handleChange('lastname',e)}/><br/>
